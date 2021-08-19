@@ -8,6 +8,8 @@ namespace WebApi
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+            decimal d = 0004;
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
