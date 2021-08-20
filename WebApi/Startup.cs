@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Sigmade.Application.Reports;
+using Sigmade.DataGenerator;
 using Sigmade.Domain;
 
 namespace WebApi
@@ -27,6 +29,8 @@ namespace WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
             });
+            services.AddScoped<FakeDataService>();
+            services.AddScoped<ReportsService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

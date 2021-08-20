@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Sigmade.Application</RootNamespace>
+    <RootNamespace>Sigmade.DataGenerator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

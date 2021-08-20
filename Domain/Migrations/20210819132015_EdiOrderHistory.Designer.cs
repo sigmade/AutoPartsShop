@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sigmade.Domain;
 
 namespace Sigmade.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210819132015_EdiOrderHistory")]
+    partial class EdiOrderHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,8 +62,8 @@ namespace Sigmade.Domain.Migrations
                     b.Property<string>("UserIpAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VendorCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("VendorCode")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
