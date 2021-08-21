@@ -26,7 +26,7 @@ namespace Sigmade.DataGenerator
             return new()
             {
                 FullName = $"{RandomArrayValue(Dictionaries.FirstNames)} {RandomArrayValue(Dictionaries.LastNames)}",
-                Login = RandomNumber(),
+                Login = ShortGuid(),
                 Password = RandomNumber(),
                 UserType = (UserType)userTypes.GetValue(_random.Next(userTypes.Length))
             };
@@ -36,14 +36,13 @@ namespace Sigmade.DataGenerator
         {
             var userId = UserIds[_random.Next(0, UserIds.Length)];
             var city = RandomArrayValue(Dictionaries.Cities);
-
             return new()
             {
                 UserId = userId,
                 City = city,
                 Name = $"{RandomArrayValue(Dictionaries.ContragentTypes)} '" +
                        $"{city} " +
-                       $"{RandomArrayValue(Dictionaries.ContragentName)}'",
+                       $"{ShortGuid()}'",
                 AccountNumber = RandomNumber()
             };
         }
@@ -68,7 +67,7 @@ namespace Sigmade.DataGenerator
             return new()
             {
                 UserContragentId = contragentId,
-                VendorCode = _random.Next(1, 99).ToString().PadLeft(6, '0'),
+                VendorCode = _random.Next(1, 102).ToString().PadLeft(6, '0'),
                 Brand = RandomArrayValue(Dictionaries.Brand),
                 UserIpAddress = $"3.15.189.{_random.Next(1, 255)}"
             };
@@ -138,6 +137,11 @@ namespace Sigmade.DataGenerator
         private static string RandomNumber()
         {
             return _random.Next(1000, 99999).ToString();
+        }
+
+        private static string ShortGuid()
+        {
+            return Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("=", "");
         }
 
         public static string RandomArrayValue(string[] values)

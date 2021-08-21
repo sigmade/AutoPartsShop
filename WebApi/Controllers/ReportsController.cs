@@ -21,5 +21,12 @@ namespace Sigmade.WebApi.Controllers
             var topGoods = await _reportsService.GetTopGoods(count);
             return Ok(topGoods);
         }
+
+        [HttpGet("not-purchased-goods")]
+        public async Task<IActionResult> GetNotPurchasedGoods()
+        {
+            var notPurchasedGoods = await _reportsService.GetNotPurchasedGoods();
+            return Ok(notPurchasedGoods);
+        }
     }
 }

@@ -30,5 +30,23 @@ namespace Sigmade.Application.Reports
                 .Take(count)
                 .ToListAsync();
         }
+
+        public async Task<List<CountGoodsDto>> GetNotPurchasedGoods()
+        {
+            var orderVendorCodes = _db.OrderHistories
+                .GroupBy(o => o.VendorCode)
+                .Select(or => new CountGoodsDto { VendorCode = or.Key, Count = or.Count() });
+
+            var searchVendorCodes = _db.SearchHistories
+                .GroupBy(o => o.VendorCode)
+                .Select(or => new CountGoodsDto { VendorCode = or.Key, Count = or.Count() });
+
+            var notPurchasedCodes = searchVendorCodes.Select(x => x.VendorCode)
+                .Except(orderVendorCodes.Select(x => x.VendorCode));
+
+            return await searchVendorCodes
+                .Where(s => notPurchasedCodes.Contains(s.VendorCode))
+                .ToListAsync();
+        }
     }
 }
