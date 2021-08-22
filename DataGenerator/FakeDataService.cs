@@ -1,7 +1,9 @@
-﻿using Sigmade.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Sigmade.Domain;
 using Sigmade.Domain.Models;
 using Sigmade.Domain.Models.Enums;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +13,7 @@ namespace Sigmade.DataGenerator
     {
         private readonly ApplicationDbContext _db;
         private static readonly Random _random = new();
+        private int NewAccountNumber;
         private static int[] UserIds;
         private static int[] ContragentIds;
 
@@ -26,8 +29,8 @@ namespace Sigmade.DataGenerator
             return new()
             {
                 FullName = $"{RandomArrayValue(Dictionaries.FirstNames)} {RandomArrayValue(Dictionaries.LastNames)}",
-                Login = ShortGuid(),
-                Password = RandomNumber(),
+                Login = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("=", ""),
+                Password = _random.Next(1000, 99999).ToString(),
                 UserType = (UserType)userTypes.GetValue(_random.Next(userTypes.Length))
             };
         }
@@ -36,39 +39,58 @@ namespace Sigmade.DataGenerator
         {
             var userId = UserIds[_random.Next(0, UserIds.Length)];
             var city = RandomArrayValue(Dictionaries.Cities);
+
+            if (NewAccountNumber == 0)
+            {
+                var lastAccountNumber = _db.UserContragents
+                .OrderByDescending(l => l.AccountNumber)
+                .Select(s => s.AccountNumber)
+                .FirstOrDefault();
+
+                _ = lastAccountNumber is null ? lastAccountNumber = "0" : lastAccountNumber;
+
+                NewAccountNumber = Int32.Parse(lastAccountNumber) + 1;
+            }
+
+            _ = NewAccountNumber++;
+
             return new()
             {
                 UserId = userId,
                 City = city,
                 Name = $"{RandomArrayValue(Dictionaries.ContragentTypes)} '" +
                        $"{city} " +
-                       $"{ShortGuid()}'",
-                AccountNumber = RandomNumber()
+                       $"{NewAccountNumber}'",
+                AccountNumber = NewAccountNumber.ToString().PadLeft(6, '0')
             };
         }
 
-        private OrderHistory NewOrderHistory()
+        static OrderHistory NewOrderHistory()
         {
             var contragentId = ContragentIds[_random.Next(0, ContragentIds.Length)];
+
+            var product = Dictionaries.Products.ElementAt(_random.Next(0, Dictionaries.Products.Count - 3));
 
             return new()
             {
                 UserContragentId = contragentId,
-                VendorCode = _random.Next(1, 99).ToString().PadLeft(6, '0'),
-                Brand = RandomArrayValue(Dictionaries.Brand),
-                Count = _random.Next(0, 50)
+                VendorCode = product.Key.ToString().PadLeft(6, '0'),
+                Brand = product.Value,
+                Count = _random.Next(1, 50)
             };
         }
 
-        private SearchHistory NewSearchHistory()
+        static SearchHistory NewSearchHistory()
         {
             var contragentId = ContragentIds[_random.Next(0, ContragentIds.Length)];
+
+            var product = Dictionaries.Products.ElementAt(_random.Next(0, Dictionaries.Products.Count));
 
             return new()
             {
                 UserContragentId = contragentId,
-                VendorCode = _random.Next(1, 102).ToString().PadLeft(6, '0'),
-                Brand = RandomArrayValue(Dictionaries.Brand),
+                VendorCode = product.Key.ToString().PadLeft(6, '0'),
+                Brand = product.Value,
                 UserIpAddress = $"3.15.189.{_random.Next(1, 255)}"
             };
         }
@@ -126,6 +148,8 @@ namespace Sigmade.DataGenerator
                 throw new Exception("Contragents not found");
             }
 
+            var searchList = new SearchHistory[count];
+
             for (int i = 0; i < count; i++)
             {
                 _db.SearchHistories.Add(NewSearchHistory());
@@ -134,17 +158,16 @@ namespace Sigmade.DataGenerator
             await _db.SaveChangesAsync();
         }
 
-        private static string RandomNumber()
+        public async Task ClearAllTables()
         {
-            return _random.Next(1000, 99999).ToString();
+            await _db.Database.ExecuteSqlRawAsync(
+                "DELETE FROM Users " +
+                "DELETE FROM UserContragents " +
+                "DELETE FROM OrderHistories " +
+                "DELETE FROM SearchHistories");
         }
 
-        private static string ShortGuid()
-        {
-            return Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("=", "");
-        }
-
-        public static string RandomArrayValue(string[] values)
+        static string RandomArrayValue(string[] values)
         {
             return values[_random.Next(0, values.Length)];
         }

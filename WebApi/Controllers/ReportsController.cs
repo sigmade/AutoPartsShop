@@ -15,18 +15,32 @@ namespace Sigmade.WebApi.Controllers
             _reportsService = reportsService;
         }
 
-        [HttpGet("top-goods")]
+        [HttpGet("top-products")]
         public async Task<IActionResult> GetTopGoods(int count)
         {
-            var topGoods = await _reportsService.GetTopGoods(count);
+            var topGoods = await _reportsService.GetTopProducts(count);
             return Ok(topGoods);
         }
 
-        [HttpGet("not-purchased-goods")]
+        [HttpGet("not-purchased-products")]
         public async Task<IActionResult> GetNotPurchasedGoods()
         {
-            var notPurchasedGoods = await _reportsService.GetNotPurchasedGoods();
+            var notPurchasedGoods = await _reportsService.GetNotPurchasedProducts();
             return Ok(notPurchasedGoods);
+        }
+
+        [HttpGet("conversion-products")]
+        public async Task<IActionResult> GetProcuctConversion()
+        {
+            var productConversion = await _reportsService.GetProductsConversion();
+            return Ok(productConversion);
+        }
+
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetOrders()
+        {
+            var s = await _reportsService.GetOrders();
+            return Ok(s);
         }
     }
 }

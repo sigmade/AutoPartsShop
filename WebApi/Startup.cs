@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Sigmade.Application.Reports;
 using Sigmade.DataGenerator;
 using Sigmade.Domain;
+using System;
 
 namespace WebApi
 {
@@ -27,7 +28,17 @@ namespace WebApi
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "WebApi",
+                    Version = "v1",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Egor Sychev",
+                        Email = "sychyov1991@mail.ru",
+                        Url = new Uri("https://www.github.com/sigmade/")
+                    }
+                });
             });
             services.AddScoped<FakeDataService>();
             services.AddScoped<ReportsService>();

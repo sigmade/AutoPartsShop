@@ -29,6 +29,13 @@ namespace Sigmade.WebApi.Controllers
             return NoContent();
         }
 
+        [HttpPost("add-search-history")]
+        public async Task<IActionResult> AddSearchHistory(int count)
+        {
+            await _fakeDataService.AddSearchHistory(count);
+            return NoContent();
+        }
+
         [HttpPost("add-order-history")]
         public async Task<IActionResult> AddOrderHistory(int count)
         {
@@ -36,10 +43,10 @@ namespace Sigmade.WebApi.Controllers
             return NoContent();
         }
 
-        [HttpPost("add-search-history")]
-        public async Task<IActionResult> AddSearchHistory(int count)
+        [HttpDelete("clear-all-tables")]
+        public async Task<IActionResult> ClearAllTables()
         {
-            await _fakeDataService.AddSearchHistory(count);
+            await _fakeDataService.ClearAllTables();
             return NoContent();
         }
     }

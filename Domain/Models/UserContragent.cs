@@ -1,4 +1,6 @@
-﻿namespace Sigmade.Domain.Models
+﻿using System.Collections.Generic;
+
+namespace Sigmade.Domain.Models
 {
     public class UserContragent
     {
@@ -8,5 +10,7 @@
         public string AccountNumber { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public ICollection<OrderHistory> Orders { get; set; }
     }
 }
