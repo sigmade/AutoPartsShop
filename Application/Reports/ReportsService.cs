@@ -34,15 +34,27 @@ namespace Sigmade.Application.Reports
 
         public async Task<List<CountProductsDto>> GetNotPurchasedProducts()
         {
+            //Альтернативный вариант: переиспользовать метод GetProductsConversion() получив артикулы с Ratio = 0
             var orderVendorCodes = _db.OrderHistories
                 .GroupBy(o => new { o.VendorCode, o.Brand })
-                .Select(or => new CountProductsDto { VendorCode = or.Key.VendorCode, Brand = or.Key.Brand, Count = or.Count() });
+                .Select(or => new CountProductsDto
+                {
+                    VendorCode = or.Key.VendorCode,
+                    Brand = or.Key.Brand,
+                    Count = or.Count()
+                });
 
             var searchVendorCodes = _db.SearchHistories
                 .GroupBy(o => new { o.VendorCode, o.Brand })
-                .Select(or => new CountProductsDto { VendorCode = or.Key.VendorCode, Brand = or.Key.Brand, Count = or.Count() });
+                .Select(or => new CountProductsDto
+                {
+                    VendorCode = or.Key.VendorCode,
+                    Brand = or.Key.Brand,
+                    Count = or.Count()
+                });
 
-            var notPurchasedCodes = searchVendorCodes.Select(x => x.VendorCode)
+            var notPurchasedCodes = searchVendorCodes
+                .Select(x => x.VendorCode)
                 .Except(orderVendorCodes.Select(x => x.VendorCode));
 
             return await searchVendorCodes

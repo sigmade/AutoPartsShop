@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sigmade.Application.Reports;
+using Sigmade.Application.Reports.Dtos;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Sigmade.WebApi.Controllers
@@ -16,6 +18,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpGet("top-products")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(TopProductsDto))]
         public async Task<IActionResult> GetTopGoods(int count)
         {
             var topGoods = await _reportsService.GetTopProducts(count);
@@ -23,6 +26,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpGet("not-purchased-products")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CountProductsDto))]
         public async Task<IActionResult> GetNotPurchasedGoods()
         {
             var notPurchasedGoods = await _reportsService.GetNotPurchasedProducts();
@@ -30,6 +34,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpGet("conversion-products")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ConversionProductsDto))]
         public async Task<IActionResult> GetProcuctConversion()
         {
             var productConversion = await _reportsService.GetProductsConversion();
@@ -37,10 +42,11 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpGet("orders")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(OrdersDto))]
         public async Task<IActionResult> GetOrders()
         {
-            var s = await _reportsService.GetOrders();
-            return Ok(s);
+            var orders = await _reportsService.GetOrders();
+            return Ok(orders);
         }
     }
 }

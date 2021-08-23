@@ -68,7 +68,6 @@ namespace Sigmade.DataGenerator
         static OrderHistory NewOrderHistory()
         {
             var contragentId = ContragentIds[_random.Next(0, ContragentIds.Length)];
-
             var product = Dictionaries.Products.ElementAt(_random.Next(0, Dictionaries.Products.Count - 3));
 
             return new()
@@ -83,7 +82,6 @@ namespace Sigmade.DataGenerator
         static SearchHistory NewSearchHistory()
         {
             var contragentId = ContragentIds[_random.Next(0, ContragentIds.Length)];
-
             var product = Dictionaries.Products.ElementAt(_random.Next(0, Dictionaries.Products.Count));
 
             return new()
@@ -113,7 +111,6 @@ namespace Sigmade.DataGenerator
             {
                 throw new Exception("Users not found");
             }
-
             for (int i = 0; i < count; i++)
             {
                 _db.UserContragents.Add(NewUserContragent());
@@ -130,7 +127,6 @@ namespace Sigmade.DataGenerator
             {
                 throw new Exception("Contragents not found");
             }
-
             for (int i = 0; i < count; i++)
             {
                 _db.OrderHistories.Add(NewOrderHistory());
@@ -147,9 +143,6 @@ namespace Sigmade.DataGenerator
             {
                 throw new Exception("Contragents not found");
             }
-
-            var searchList = new SearchHistory[count];
-
             for (int i = 0; i < count; i++)
             {
                 _db.SearchHistories.Add(NewSearchHistory());

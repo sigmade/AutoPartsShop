@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sigmade.DataGenerator;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Sigmade.WebApi.Controllers
@@ -16,6 +17,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpPost("add-users")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddFakeUsers(int count)
         {
             await _fakeDataService.AddUser(count);
@@ -23,6 +25,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpPost("add-user-contragent")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddFakeUserContragents(int count)
         {
             await _fakeDataService.AddUserContragent(count);
@@ -30,6 +33,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpPost("add-search-history")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddSearchHistory(int count)
         {
             await _fakeDataService.AddSearchHistory(count);
@@ -37,6 +41,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpPost("add-order-history")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddOrderHistory(int count)
         {
             await _fakeDataService.AddOrderHistory(count);
@@ -44,6 +49,7 @@ namespace Sigmade.WebApi.Controllers
         }
 
         [HttpDelete("clear-all-tables")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> ClearAllTables()
         {
             await _fakeDataService.ClearAllTables();
