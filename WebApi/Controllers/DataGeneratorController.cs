@@ -36,8 +36,8 @@ namespace Sigmade.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddSearchHistory(int count)
         {
-            await _fakeDataService.AddSearchHistory(count);
-            return NoContent();
+            var res = await _fakeDataService.AddSearchHistory(count);
+            return Ok(res);
         }
 
         [HttpPost("add-order-history")]

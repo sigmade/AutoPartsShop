@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Sigmade.Domain;
 using Sigmade.Domain.Models;
 using Sigmade.Domain.Models.Enums;
@@ -135,20 +137,53 @@ namespace Sigmade.DataGenerator
             await _db.SaveChangesAsync();
         }
 
-        public async Task AddSearchHistory(int count)
+        ////EF 00:48
+        //public async Task<TimeSpan> AddSearchHistory(int count)
+        //{
+        //    var start = DateTime.Now;
+        //    ContragentIds = _db.UserContragents.Select(u => u.Id).ToArray();
+
+        //    if (ContragentIds.Length == 0)
+        //    {
+        //        throw new Exception("Contragents not found");
+        //    }
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        _db.SearchHistories.Add(NewSearchHistory());
+        //    }
+
+        //    await _db.SaveChangesAsync();
+        //    var end = DateTime.Now;
+        //    var diff = end - start;
+
+        //    return diff;
+        //}
+
+        //DAPPER 2:32 - 3:32 
+        public async Task<TimeSpan> AddSearchHistory(int count)
         {
             ContragentIds = _db.UserContragents.Select(u => u.Id).ToArray();
+            TimeSpan diff;
 
             if (ContragentIds.Length == 0)
             {
                 throw new Exception("Contragents not found");
             }
-            for (int i = 0; i < count; i++)
+            using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=AutoPartsDB;Trusted_Connection=True;"))
             {
-                _db.SearchHistories.Add(NewSearchHistory());
-            }
+                var start = DateTime.Now;
 
-            await _db.SaveChangesAsync();
+                for (int i = 0; i < count; i++)
+                {
+                    var sqlQuery = "INSERT INTO [dbo].[SearchHistories] (UserContragentId, VendorCode, Brand, UserIpAddress)  VALUES (@UserContragentId, @VendorCode, @Brand, @UserIpAddress)";
+                    await db.ExecuteAsync(sqlQuery, NewSearchHistory());
+                }
+
+                var end = DateTime.Now;
+                diff = end - start;
+
+            }
+                return diff;
         }
 
         public async Task ClearAllTables()
