@@ -103,12 +103,15 @@ namespace Sigmade.DataGenerator
                 _db.Users.Add(NewUser());
             }
 
-            var subchild = _db.SubChild.Where(c => c.Id == 1 ).FirstOrDefault();
-            var subchilds = new List<SubChild> {};
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task AddChildM2M()
+        {
+            var subchild = _db.SubChild.Where(c => c.Id == 1).FirstOrDefault();
+            var subchilds = new List<SubChild> { };
 
             subchilds.Add(subchild);
-
-
 
             var main = new Main { Name = "main1" };
 

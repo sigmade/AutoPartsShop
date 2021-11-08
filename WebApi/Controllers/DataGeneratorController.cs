@@ -32,6 +32,14 @@ namespace Sigmade.WebApi.Controllers
             return NoContent();
         }
 
+        [HttpPost("add-child-m2m")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AddChildM2()
+        {
+            await _fakeDataService.AddChildM2M();
+            return NoContent();
+        }
+
         [HttpPost("add-search-history")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddSearchHistory(int count)
