@@ -26,6 +26,7 @@ namespace WebApi
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -56,6 +57,13 @@ namespace WebApi
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
+                app.UseCors(options =>
+                {
+                    options.AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .WithOrigins("http://localhost:4200")
+                           .AllowCredentials();
+                });
             }
 
             app.UseHangfireDashboard("/hangfire");

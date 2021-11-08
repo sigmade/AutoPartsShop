@@ -5,6 +5,7 @@ using Sigmade.Domain;
 using Sigmade.Domain.Models;
 using Sigmade.Domain.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,6 +102,20 @@ namespace Sigmade.DataGenerator
             {
                 _db.Users.Add(NewUser());
             }
+
+            var subchild = _db.SubChild.Where(c => c.Id == 1 ).FirstOrDefault();
+            var subchilds = new List<SubChild> {};
+
+            subchilds.Add(subchild);
+
+
+
+            var main = new Main { Name = "main1" };
+
+            var child = new Child { Name = "child2", Main = main, SubChilds = subchilds };
+            var child2 = new Child { Name = "child33", Main = main, SubChilds = subchilds };
+
+            _db.AddRange(child, child2);
 
             await _db.SaveChangesAsync();
         }

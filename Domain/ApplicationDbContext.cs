@@ -14,5 +14,9 @@ namespace Sigmade.Domain
         public DbSet<SearchHistory> SearchHistories { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserContragent> UserContragents { get; set; }
+        public DbSet<Main> Mains { get; set; }
+        public DbSet<Child> Childs { get; set; }
+
+        public DbSet<SubChild> SubChild { get; set; }
     }
 }
