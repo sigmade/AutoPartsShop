@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Sigmade.Domain;
@@ -50,9 +52,9 @@ namespace Sigmade.DataGenerator
                 .Select(s => s.AccountNumber)
                 .FirstOrDefault();
 
-                _ = lastAccountNumber is null ? lastAccountNumber = "0" : lastAccountNumber;
+                var s = lastAccountNumber is null ? lastAccountNumber = "0" : lastAccountNumber;
 
-                NewAccountNumber = Int32.Parse(lastAccountNumber) + 1;
+                NewAccountNumber = Int32.Parse(s) + 1;
             }
 
             _ = NewAccountNumber++;
@@ -108,17 +110,19 @@ namespace Sigmade.DataGenerator
 
         public async Task AddChildM2M()
         {
-            var subchild = _db.SubChild.Where(c => c.Id == 1).FirstOrDefault();
-            var subchilds = new List<SubChild> { };
+            var existid = new List<int> { 1, 2 };
 
-            subchilds.Add(subchild);
+            var subchilds = _db.SubChild.Where(c => existid.Contains(c.Id)).ToList();
 
-            var main = new Main { Name = "main1" };
+            var childs = new List<Child>();
 
-            var child = new Child { Name = "child2", Main = main, SubChilds = subchilds };
-            var child2 = new Child { Name = "child33", Main = main, SubChilds = subchilds };
+            var main = new Main { Name = "main1", Childs = childs };
 
-            _db.AddRange(child, child2);
+            childs.Add(new Child { Name = "child2", Main = main, SubChilds = subchilds.Where(c => c.Id == 1).ToList() });
+            childs.Add(new Child { Name = "child3", Main = main, SubChilds = subchilds.Where(c => c.Id == 1).ToList() });
+            childs.Add(new Child { Name = "child3", Main = main, SubChilds = subchilds.Where(c => c.Id == 2).ToList() });
+
+            _db.Add(main);
 
             await _db.SaveChangesAsync();
         }
