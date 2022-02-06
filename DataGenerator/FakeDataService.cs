@@ -108,25 +108,6 @@ namespace Sigmade.DataGenerator
             await _db.SaveChangesAsync();
         }
 
-        public async Task AddChildM2M()
-        {
-            var existid = new List<int> { 1, 2 };
-
-            var subchilds = _db.SubChild.Where(c => existid.Contains(c.Id)).ToList();
-
-            var childs = new List<Child>();
-
-            var main = new Main { Name = "main1", Childs = childs };
-
-            childs.Add(new Child { Name = "child2", Main = main, SubChilds = subchilds.Where(c => c.Id == 1).ToList() });
-            childs.Add(new Child { Name = "child3", Main = main, SubChilds = subchilds.Where(c => c.Id == 1).ToList() });
-            childs.Add(new Child { Name = "child3", Main = main, SubChilds = subchilds.Where(c => c.Id == 2).ToList() });
-
-            _db.Add(main);
-
-            await _db.SaveChangesAsync();
-        }
-
         public async Task AddUserContragent(int count)
         {
             UserIds = _db.Users.Select(u => u.Id).ToArray();
