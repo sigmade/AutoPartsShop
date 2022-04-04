@@ -3,6 +3,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Sigmade.DataGenerator.Model;
 using Sigmade.Domain;
 using Sigmade.Domain.Models;
 using Sigmade.Domain.Models.Enums;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Sigmade.DataGenerator
@@ -140,54 +142,93 @@ namespace Sigmade.DataGenerator
             await _db.SaveChangesAsync();
         }
 
-        ////EF 00:48
-        //public async Task<TimeSpan> AddSearchHistory(int count)
-        //{
-        //    var start = DateTime.Now;
-        //    ContragentIds = _db.UserContragents.Select(u => u.Id).ToArray();
-
-        //    if (ContragentIds.Length == 0)
-        //    {
-        //        throw new Exception("Contragents not found");
-        //    }
-        //    for (int i = 0; i < count; i++)
-        //    {
-        //        _db.SearchHistories.Add(NewSearchHistory());
-        //    }
-
-        //    await _db.SaveChangesAsync();
-        //    var end = DateTime.Now;
-        //    var diff = end - start;
-
-        //    return diff;
-        //}
-
-        //DAPPER 2:32 - 3:32 
-        public async Task<TimeSpan> AddSearchHistory(int count)
+        //EF 00:48 300К  800mb memory
+        public async Task<Diagnostic> AddSearchHistory(int count)
         {
+            var diagnostic = new Diagnostic();
+            var start = DateTime.Now;
+            diagnostic.MemoryBeforeMb = GC.GetTotalMemory(false) / 1024 / 1024;
+
             ContragentIds = _db.UserContragents.Select(u => u.Id).ToArray();
-            TimeSpan diff;
+            var searchHistoryList = new List<SearchHistory>(300000);
+            diagnostic.GenerationBefore = GC.GetGeneration(searchHistoryList);
 
             if (ContragentIds.Length == 0)
             {
                 throw new Exception("Contragents not found");
             }
-            using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=AutoPartsDB;Trusted_Connection=True;"))
+            for (int i = 0; i < count; i++)
             {
-                var start = DateTime.Now;
-
-                for (int i = 0; i < count; i++)
-                {
-                    var sqlQuery = "INSERT INTO [dbo].[SearchHistories] (UserContragentId, VendorCode, Brand, UserIpAddress)  VALUES (@UserContragentId, @VendorCode, @Brand, @UserIpAddress)";
-                    await db.ExecuteAsync(sqlQuery, NewSearchHistory());
-                }
-
-                var end = DateTime.Now;
-                diff = end - start;
-
+                searchHistoryList.Add(NewSearchHistory());
             }
-                return diff;
+
+            _db.SearchHistories.AddRange(searchHistoryList);
+            await _db.SaveChangesAsync();
+
+            var end = DateTime.Now;
+            var diff = end - start;
+            diagnostic.MemoryAfterMb = GC.GetTotalMemory(false) / 1024 / 1024;
+            searchHistoryList = null;
+            _db.Dispose();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            diagnostic.MemoryAfterGcMb = GC.GetTotalMemory(false) / 1024 / 1024;
+            //diagnostic.GenerationAfter = GC.GetGeneration(searchHistoryList);
+            diagnostic.TimeExecuted = diff;
+
+            return diagnostic;
         }
+
+        //DAPPER 2:32 - 3:32 //500- 1:22 //5000-1:13 10000-1:16  500 mb memory
+        //public async Task<TimeSpan> AddSearchHistory(int count)
+        //{
+        //    ContragentIds = _db.UserContragents.Select(u => u.Id).ToArray();
+        //    TimeSpan diff;
+        //    var start = DateTime.Now;
+
+        //    if (ContragentIds.Length == 0)
+        //    {
+        //        throw new Exception("Contragents not found");
+        //    }
+
+        //    var list = new List<SearchHistory>(300000);
+
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        list.Add(NewSearchHistory());
+        //    }
+
+        //    var total = list.Count;
+        //    var packageSize = 50000;
+
+        //    do
+        //    {
+        //        var package = list
+        //            .Skip(list.Count - total)
+        //            .Take(packageSize);
+
+        //        var sb = new StringBuilder("");
+
+        //        foreach (var i in package)
+        //        {
+        //            sb.Append($"INSERT INTO[dbo].[SearchHistories](UserContragentId, VendorCode, Brand, UserIpAddress)  VALUES({i.UserContragentId}, '{i.VendorCode}', '{i.Brand}', '{i.UserIpAddress}') ");
+        //        }
+
+        //        total -= packageSize;
+
+        //        using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=AutoPartsDB;Trusted_Connection=True;"))
+        //        {
+        //            await db.ExecuteAsync(sb.ToString());
+        //        }
+
+        //    } while (total > 0);
+        //    var end = DateTime.Now;
+        //    diff = end - start;
+        //    return diff;
+        //}
 
         public async Task ClearAllTables()
         {

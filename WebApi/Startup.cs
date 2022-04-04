@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sigmade.Application.Reports;
 using Sigmade.DataGenerator;
 using Sigmade.Domain;
 using System;
+using System.IO;
 
 namespace WebApi
 {
@@ -69,6 +71,14 @@ namespace WebApi
             }
 
             app.UseHangfireDashboard("/hangfire");
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+                RequestPath = "/images"
+            });
+
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 

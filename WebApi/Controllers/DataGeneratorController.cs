@@ -1,6 +1,7 @@
 ﻿// This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Sigmade.DataGenerator;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,16 +13,21 @@ namespace Sigmade.WebApi.Controllers
     public class DataGeneratorController : ControllerBase
     {
         private readonly FakeDataService _fakeDataService;
+        private readonly ILogger _logger;
 
-        public DataGeneratorController(FakeDataService fakeDataService)
+        public DataGeneratorController(
+            FakeDataService fakeDataService,
+            ILogger logger)
         {
             _fakeDataService = fakeDataService;
+            _logger = logger;
         }
 
         [HttpPost("add-users")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddFakeUsers(int count)
         {
+            _logger.Error("OOOOpsssss");
             await _fakeDataService.AddUser(count);
             return NoContent();
         }

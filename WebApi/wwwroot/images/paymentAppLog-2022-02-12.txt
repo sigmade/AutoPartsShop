@@ -1,0 +1,6 @@
+2022-02-12 14:21:16.0486|DEBUG|Program|Start PaymentApp
+2022-02-12 14:21:23.7510|WARN|Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware|Failed to determine the https port for redirect.
+2022-02-12 14:22:25.7560|DEBUG|Program|Start PaymentApp
+2022-02-12 14:22:40.5193|WARN|Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware|Failed to determine the https port for redirect.
+2022-02-12 14:23:23.2688|DEBUG|Program|Start PaymentApp
+2022-02-12 14:23:31.0227|WARN|Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware|Failed to determine the https port for redirect.
